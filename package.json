@@ -1,0 +1,12 @@
+{
+  "name": "jamstack-todo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:bigotilda/jamstack-todo.git",
+  "author": "Nathan Nadeau <nathan.nadeau@logmein.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ]
+}
