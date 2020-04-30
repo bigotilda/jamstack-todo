@@ -1,24 +1,37 @@
-import React, { useEffect } from "react";
+import React, { useContext } from 'react';
 import {
   Container,
   Heading,
   Button,
-  Flex
-} from "theme-ui";
-import netlifyIdentity from "netlify-identity-widget";
+  Flex,
+  NavLink
+} from 'theme-ui';
+import { Link } from 'gatsby';
+import { IdentityContext } from '../../identity-context';
 
 export default (props) => {
-  useEffect(() => {
-    netlifyIdentity.init({});
-  });
+  const { user, identity } = useContext(IdentityContext);
   return (
     <Container>
+      <Flex as='nav'>
+        <NavLink as={Link} to="/" p={2}>
+          Home
+        </NavLink>
+        <NavLink as={Link} to="/app" p={2}>
+          Dashboard
+        </NavLink>
+        {user && (
+          <NavLink href="#!" p={2}>
+            {user.user_metadata.full_name}
+          </NavLink>
+        )}
+      </Flex>
       <Flex sx={{ flexDirection: "column", padding: 3 }}>
         <Heading as="h1">Get Stuff Done</Heading>
         <Button
           xs={{ marginTop: 2 }}
           onClick={() => {
-            netlifyIdentity.open();
+            identity.open();
           }}
         >
           Log In
