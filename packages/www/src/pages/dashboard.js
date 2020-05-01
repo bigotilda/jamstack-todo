@@ -1,7 +1,7 @@
 import React, {
   useContext,
   useRef,
-  useState
+  useReducer
 } from 'react';
 import { Link } from '@reach/router';
 import {
@@ -15,10 +15,26 @@ import {
 } from 'theme-ui';
 import { IdentityContext } from '../../identity-context';
 
+const ADD_TODO = 'ADD_TODO';
+const TOGGLE_TODO = 'TOGGLE_TODO';
+
+const todosReducer = (state, action) => {
+  switch(action.type) {
+    case ADD_TODO:
+      return [{done: false, value: action.payload}, ...state];
+    case TOGGLE_TODO:
+      const newState = [...state];
+      newState[action.payload].done = !newState[action.payload].done;
+      return newState;
+    default:
+      return state;
+  }
+}
+
 const Dash = () => {
   const { user, identity } = useContext(IdentityContext);
   const inputRef = useRef();
-  const [todos, setTodos] = useState([]);
+  const [todos, dispatch] = useReducer(todosReducer, []);
   return (
     <Container>
       <Flex as="nav">
@@ -44,7 +60,7 @@ const Dash = () => {
         as="form"
         onSubmit={(e) => {
           e.preventDefault();
-          setTodos([{done: false, value: inputRef.current.value}, ...todos]);
+          dispatch({type: ADD_TODO, payload: inputRef.current.value});
           inputRef.current.value = '';
         }}
       >
@@ -59,11 +75,9 @@ const Dash = () => {
           <Flex
             as="li"
             key={i}
-            sx={{ alignItems: 'center' }}
+            sx={{ alignItems: 'center', cursor: 'pointer' }}
             onClick={() => {
-              const theTodo = todos[i];
-              theTodo.done = !theTodo.done;
-              setTodos([...todos.slice(0, i), theTodo, ...todos.slice(i+1)]);
+              dispatch({type: TOGGLE_TODO, payload: i})
             }}
           >
             <Checkbox checked={t.done} sx={{ paddingRight: 1 }}/>
