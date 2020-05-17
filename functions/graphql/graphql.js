@@ -3,7 +3,7 @@ const { ApolloServer, gql } = require('apollo-server-lambda');
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
   type Query {
-    todos: [ToDo]!
+    todos: [Todo]!
   }
   type Todo {
     id: ID!
