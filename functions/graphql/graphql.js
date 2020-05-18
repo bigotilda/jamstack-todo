@@ -23,6 +23,7 @@ let todoIndex = 0;
 const resolvers = {
   Query: {
     todos: (parent, args, { user }) => {
+      console.log(`NDN: user: ${user}`)
       if (!user) {
         return [];
       } else {
@@ -48,7 +49,13 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: (integrationContext) => {
-    console.log(`NDN: integrationContext: ${integrationContext}`);
+    console.log(`NDN: integrationContext.context.clientContext: ${integrationContext.context.clientContext}`);
+    for (let p in integrationContext.context) {
+      console.log(`NDN: p in integrationContext.context: ${p}`);
+    }
+    for (let p in integrationContext.context.clientContext) {
+      console.log(`NDN: p in integrationContext.context.clientContext`);
+    }
     if (integrationContext.context.clientContext.user) {
       return { user: integrationContext.context.clientContext.user.sub };
     } else {
