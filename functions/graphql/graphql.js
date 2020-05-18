@@ -54,7 +54,7 @@ const server = new ApolloServer({
       console.log(`NDN: p in integrationContext.context: ${p}`);
     }
     for (let p in integrationContext.context.clientContext) {
-      console.log(`NDN: p in integrationContext.context.clientContext`);
+      console.log(`NDN: p in integrationContext.context.clientContext: ${p}`);
     }
     if (integrationContext.context.clientContext.user) {
       return { user: integrationContext.context.clientContext.user.sub };
