@@ -25,16 +25,16 @@ const resolvers = {
     todos: () => Object.values(todos),
   },
   Mutation: {
-      addTodo: (_, { text }) => {
+    addTodo: (_, { text }) => {
         todoIndex++;
         const id = `key-${todoIndex}`;
         todos[id] = {id, text, done: false};
         return todos[id];
-      },
-      updateTodoDone: (_, { id }) => {
+    },
+    updateTodoDone: (_, { id }) => {
         todos[id].done = !todos[id].done;
         return todos[id];
-      }
+    }
   }
 };
  
@@ -51,4 +51,9 @@ const server = new ApolloServer({
   introspection: true,
 });
  
-exports.handler = server.createHandler();
+exports.handler = server.createHandler({
+  cors: {
+    origin: '*',
+    credentials: true
+  }
+});
