@@ -8,6 +8,7 @@ const tokens = {
   ...deep,
   sizes: { container: 1024 }
 };
+
 module.exports = ({element}) => (
   <Provider>
     <ThemeProvider theme={tokens}>{element}</ThemeProvider>

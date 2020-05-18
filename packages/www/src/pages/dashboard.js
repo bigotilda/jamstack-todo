@@ -1,7 +1,6 @@
 import React, {
   useContext,
-  useRef,
-  useReducer
+  useRef
 } from 'react';
 import { Link } from '@reach/router';
 import {
@@ -14,27 +13,45 @@ import {
   Checkbox
 } from 'theme-ui';
 import { IdentityContext } from '../../identity-context';
+import { 
+  gql,
+  useMutation,
+  useQuery
+} from '@apollo/client';
 
-const ADD_TODO = 'ADD_TODO';
-const TOGGLE_TODO = 'TOGGLE_TODO';
-
-const todosReducer = (state, action) => {
-  switch(action.type) {
-    case ADD_TODO:
-      return [{done: false, value: action.payload}, ...state];
-    case TOGGLE_TODO:
-      const newState = [...state];
-      newState[action.payload].done = !newState[action.payload].done;
-      return newState;
-    default:
-      return state;
+const ADD_TODO = gql`
+  mutation AddTodo($text: String!) {
+    addTodo(text: $text) {
+      id
+    }
   }
-}
+`;
+
+const GET_TODOS = gql`
+  query GetTodos {
+    todos {
+      id
+      text
+      done
+    }
+  }
+`;
+
+const UPDATE_TODO_DONE = gql`
+  mutation UpdateTodoDone($id: ID!) {
+    updateTodoDone(id: $id) {
+      text
+      done
+    }
+  }
+`;
 
 const Dash = () => {
   const { user, identity } = useContext(IdentityContext);
   const inputRef = useRef();
-  const [todos, dispatch] = useReducer(todosReducer, []);
+  const [addTodo] = useMutation(ADD_TODO);
+  const { loading, error, data, refetch } = useQuery(GET_TODOS);
+  const [updateTodoDone] = useMutation(UPDATE_TODO_DONE);
   return (
     <Container>
       <Flex as="nav">
@@ -58,10 +75,12 @@ const Dash = () => {
       </Flex>
       <Flex
         as="form"
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
-          dispatch({type: ADD_TODO, payload: inputRef.current.value});
+          const todoText = inputRef.current.value;
           inputRef.current.value = '';
+          await addTodo({variables: { text: todoText }});
+          await refetch();
         }}
       >
         <Label sx={{ display: 'flex', alignItems: 'center' }}>
@@ -70,21 +89,28 @@ const Dash = () => {
           <Button sx={{ marginLeft: 1 }}>Submit</Button>
         </Label>
       </Flex>
-      <ul style={{ listStyleType: 'none' }}>
-        {todos.map((t, i) => (
-          <Flex
-            as="li"
-            key={i}
-            sx={{ alignItems: 'center', cursor: 'pointer' }}
-            onClick={() => {
-              dispatch({type: TOGGLE_TODO, payload: i})
-            }}
-          >
-            <Checkbox checked={t.done} sx={{ paddingRight: 1 }}/>
-            <span>{t.value}</span>
-          </Flex>
-        ))}
-      </ul>
+      <Flex sx={{ flexDirection: "column" }}>
+        {loading ? <div>Loading...</div> : null}
+        {error ? <div>{error.message}</div> : null}
+        {!loading && !error && (
+          <ul style={{ listStyleType: 'none' }}>
+            {data.todos.map((t) => (
+              <Flex
+                as="li"
+                key={t.id}
+                sx={{ alignItems: 'center', cursor: 'pointer' }}
+                onClick={async () => {
+                  await updateTodoDone({ variables: {id: t.id} });
+                  await refetch();
+                }}
+              >
+                <Checkbox checked={t.done} sx={{ paddingRight: 1 }} readOnly />
+                <span>{t.text}</span>
+              </Flex>
+            ))}
+          </ul>
+        )}
+      </Flex>
     </Container>
   )
 };
