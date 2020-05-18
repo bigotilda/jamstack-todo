@@ -58,12 +58,9 @@ const server = new ApolloServer({
     }
     for (let p in integrationContext.context.clientContext.custom) {
       console.log(`NDN: p in integrationContext.context.clientContext.custom: ${p}`);
-    }
-    for (let p in integrationContext.context.clientContext.identity) {
-      console.log(`NDN: p in integrationContext.context.clientContext.identity: ${p}`);
-      for (let q in integrationContext.context.clientContext.identity[p]) {
-        console.log(`NDN: q in identity: ${q}`)
-        console.log(`NDN: q value: ${integrationContext.context.clientContext.identity[p][q]}`);
+      for (let q in integrationContext.context.clientContext.custom.netlify) {
+        console.log(`NDN: q in custom.netlify: ${q}`)
+        console.log(`NDN: q value: ${integrationContext.context.clientContext.custom.netlify[q]}`);
       }
     }
     if (integrationContext.context.clientContext.user) {
