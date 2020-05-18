@@ -23,7 +23,6 @@ let todoIndex = 0;
 const resolvers = {
   Query: {
     todos: (parent, args, { user }) => {
-      console.log(`NDN: user: ${user}`)
       if (!user) {
         return [];
       } else {
@@ -58,10 +57,11 @@ const server = new ApolloServer({
     }
     for (let p in integrationContext.context.clientContext.custom) {
       console.log(`NDN: p in integrationContext.context.clientContext.custom: ${p}`);
-      for (let q in integrationContext.context.clientContext.custom.netlify) {
-        console.log(`NDN: q in custom.netlify: ${q}`)
-        console.log(`NDN: q value: ${integrationContext.context.clientContext.custom.netlify[q]}`);
-      }
+      console.log(`custom.netlify: ${integrationContext.context.clientContext.custom.netlify}`);
+    }
+    for (let p in integrationContext.context.clientContext.identity) {
+      console.log(`NDN: p in integrationContext.context.clientContext.identity: ${p}`);
+      console.log(`identity.url: ${integrationContext.context.clientContext.identity.url}`);
     }
     if (integrationContext.context.clientContext.user) {
       return { user: integrationContext.context.clientContext.user.sub };
