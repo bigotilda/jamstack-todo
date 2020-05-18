@@ -6,7 +6,7 @@ import {
   Button,
 } from 'theme-ui';
 import { IdentityContext } from '../../identity-context';
-import Dash from './dashboard';
+import Dash from '../components/dashboard';
 
 const DashLoggedOut = (props) => {
   const { identity } = useContext(IdentityContext);
